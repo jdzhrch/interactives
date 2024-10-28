@@ -12,56 +12,57 @@ mapboxgl.accessToken = "pk.eyJ1IjoibWxub3ciLCJhIjoiY2t0d2FsdWRpMmkxbDMxcnJ4eTNsM
     dragPan: false,
     touchZoomRotate: false
     });
-// 定義每個選區的種族構成數據
-//數據來源: https://sfgov.maps.arcgis.com/apps/webappviewer/index.html?id=57159538a9a3422a9d22ef75d66565b6
-var raceBreakdown = {
-    "第 1 選區": {
-        "亞裔": 41.25,
+
+    // Define race breakdown data for each district, 
+    //data source: https://sfgov.maps.arcgis.com/apps/webappviewer/index.html?id=57159538a9a3422a9d22ef75d66565b6
+    var raceBreakdown = {
+        "District 1": {
+            "亞裔": 41.25,
         "非裔": 2.89,
         "原住民": 0.44,
         "拉美裔": 7.16,
         "白人": 47.17
-    },
-    "第 3 選區": {
-        "亞裔": 38.03,
+        },
+        "District 3": {
+            "亞裔": 38.03,
         "非裔": 3.85,
         "原住民": 0.78,
         "拉美裔": 6.95,
         "白人": 49.43
-    },
-    "第 5 選區": {
-        "亞裔": 20.75,
+        },
+        "District 5": {
+            "亞裔": 20.75,
         "非裔": 12.6,
         "原住民": 0.87,
         "拉美裔": 10.59,
         "白人": 53.51
-    },
-    "第 7 選區": {
-        "亞裔": 35,
+        },
+        "District 7": {
+             "亞裔": 35,
         "非裔": 4.01,
         "原住民": 0.4,
         "拉美裔": 11.2,
         "白人": 48.21
-    },
-    "第 9 選區": {
-        "亞裔": 25.34,
+        },
+        "District 9": {
+            "亞裔": 25.34,
         "非裔": 4.91,
         "原住民": 0.49,
         "拉美裔": 26.24,
         "白人": 41.87
-    },
-    "第 11 選區": {
-        "亞裔": 56.55,
+        },
+        "District 11": {
+            "亞裔": 56.55,
         "非裔": 5.39,
         "原住民": 0.19,
         "拉美裔": 21.12,
         "白人": 15.85
-    }		
-};
+        }		
+    };
 
-// 定義每個選區的候選人信息
-var candidates = {
-    "第 1 選區": [
+    // Define candidate information for each district
+    var candidates = {
+        "District 1": [
         {
             name: "Jeremiah Boehner",
             jobDescription: "市場營銷專家和美國陸軍退伍軍人",
@@ -113,7 +114,7 @@ var candidates = {
             imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/02/D1-Marjan-Philhour.png"
         }
     ],
-    "第 3 選區": [
+        "District 3": [
         {
             name: "Wendy Ha Chau",
             jobDescription: "律師",
@@ -175,7 +176,7 @@ var candidates = {
             imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/02/D3-Matthew-Susk-640x640.png"
         }
     ],
-    "第 5 選區": [
+        "District 5": [
         {
             name: "Scotty Jacobs",
             jobDescription: "市場營銷",
@@ -227,7 +228,7 @@ var candidates = {
             imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/02/D5-Dean-Preston.png"
         }
     ],
-    "第 7 選區": [
+        "District 7": [
         {
             name: "Matthew Boschetto",
             jobDescription: "小企業主",
@@ -267,7 +268,7 @@ var candidates = {
             imageURL: "https://newspack-missionlocal.s3.amazonaws.com/mission/wp-content/uploads/2024/09/D7-Edward-Yee.png"
         }
     ],
-    "第 9 選區": [
+        "District 9":  [
         {
             name: "Julian Bermudez",
             jobDescription: "在家族企業Rancho Grande Appliance工作並擔任主管",
@@ -328,31 +329,99 @@ var candidates = {
             languages: "英語、西班牙語",
             imageURL: "https://newspack-missionlocal.s3.amazonaws.com/mission/wp-content/uploads/2024/05/Jose-Morales.png"
         }
-    ]
-};
+    ],
+        "District 11": [
+    {
+        name: "Chyanne Chen",
+        jobDescription: "工人組織者、社區推動者及教育工作者",
+        age: "39",
+        residency: "房主、房東，自 2000 年 8 月起居住在 District 11",
+        transportation: "步行、大眾運輸、共乘和私家車",
+        education: "University of California, Davis 學士學位、Cornell University 碩士學位、University of Illinois Urbana-Champaign 教育博士學位在讀",
+        languages: "英語、國語、粵語",
+        imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/03/Chyanne-Chen.png"
+    },
+    {
+        name: "Adlah Chisti",
+        jobDescription: "公共政策分析師、照護者",
+        age: "40",
+        residency: "與父母同住並照顧他們，1983 年出生於 District 11 並居住至今，2013 年搬出後於 2017 年搬回",
+        transportation: "大眾運輸",
+        education: "University of San Francisco 政治學和環境科學學士學位及教育碩士學位、Georgetown McCourt School of Public Policy 公共政策碩士學位、University of California Law, San Francisco 法學博士學位",
+        languages: "英語、西班牙語、印地語",
+        imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/02/D11-Adlah-Chisti.png"
+    },
+    {
+        name: "Oscar Flores",
+        jobDescription: "專案工程師",
+        age: "29",
+        residency: "租客，1995 年出生於 District 11 並持續居住至今，除了求學期間",
+        transportation: "私家車",
+        education: "University of Portsmouth 機械工程學士學位，University of Surrey 太空工程碩士（研究生證書）",
+        languages: "西班牙語、法語、英語",
+        imageURL: "https://newspack-missionlocal.s3.amazonaws.com/mission/wp-content/uploads/2024/09/D11-Oscar-Flores.png"
+    },
+    {
+        name: "Ernest "E.J." Jones",
+        jobDescription: "社區倡議者",
+        age: "38",
+        residency: "自 1985 年 11 月起居住在 District 11，除了求學期間一直住在這裡",
+        imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/02/D11-Ernest-Jones.png"
+    },
+    {
+        name: "Michael Lai",
+        jobDescription: "幼兒教育主任，當選 San Francisco Democratic Party 黨員",
+        age: "31",
+        residency: "租客，自 2024 年 2 月起居住在 District 11",
+        transportation: "交通方式：大眾運輸",
+        education: "Harvard College 政府系學士學位，曾在 Harvard Graduate School of Education 修課",
+        languages: "英語、國語",
+        imageURL: "https://newspack-missionlocal.s3.amazonaws.com/mission/wp-content/uploads/2024/04/Michael-Lai.png"
+    },
+    {
+        name: "Roger Marenco",
+        jobDescription: "交通運輸操作員",
+        age: "42",
+        residency: "租客，自 2014 年 5 月起居住在 District 11",
+        transportation: "大眾運輸",
+        education: "San Francisco State University 環境永續發展與社會正義學士學位，City College San Francisco",
+        languages: "英語、西班牙語",
+        imageURL: "https://missionloca.s3.amazonaws.com/mission/wp-content/uploads/2024/02/D11-Roger-Marenco.png"
+    },
+    {
+        name: "Jose Morales",
+        jobDescription: "銷售專業人員、小型企業主",
+        age: "28",
+        residency: "租客，1995 年出生於 District 11 並居住至今，除了 2014 年至 2017 年求學期間和 2021 年至 2022 年底居住在 Idaho",
+        transportation: "交通方式：私家車",
+        education: "Sonoma State University 經濟學學士學位",
+        languages: "英語、西班牙語",
+        imageURL: "https://newspack-missionlocal.s3.amazonaws.com/mission/wp-content/uploads/2024/05/Jose-Morales.png"
+    }
+]
+    };
 
-// 定義選區信息和鏈接
-var districtInfo = {
-    "第 1 選區": {
+    // Define district information and URLs
+    var districtInfo = {
+        "District 1": {
         intro: "四名候選人已<span class='districtLink' data-url='https://www.sf.gov/reports/november-2024/candidates-november-5-2024-consolidated-general-election'>申請參選</span>，挑戰現任市議員Connie Chan在第 1 選區的席位。該選區包括Richmond、Lone Mountain、Golden Gate Park、Lincoln Park和University of San Francisco。閱讀第 1 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/02/meet-the-candidates-all-2024-district-1-supervisor-answers/'>這裡</span>。"
     },
-    "第 3 選區": {
+    "District 3": {
         intro: "因為市議員Aaron Peskin任期將於明年1月結束，六名候選人已<span class='districtLink' data-url='https://www.sf.gov/reports/november-2024/candidates-november-5-2024-consolidated-general-election'>申請參選</span>第 3 選區的席位，該選區包括North Beach、Chinatown、Union Square、Financial District、Russian Hill和Nob Hill。閱讀第 3 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/02/meet-the-candidates-all-2024-district-3-supervisor-answers/'>這裡</span>。"
     },
-    "第 5 選區": {
+    "District 5": {
         intro: "四名候選人已<span class='districtLink' data-url='https://www.sf.gov/reports/november-2024/candidates-november-5-2024-consolidated-general-election'>申請參選</span>，挑戰現任市議員Dean Preston在第 5 選區的席位。該選區在2022年重新劃區時發生了重大變化，現在範圍從Golden Gate Park東端經過Haight-Ashbury、Japantown和Western Addition、Lower Haight和Hayes Valley，以及大部分Tenderloin地區。閱讀第 5 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/02/meet-the-candidates-all-2024-district-5-supervisor-answers/'>這裡</span>。"
     },
-    "第 7 選區": {
+    "District 7": {
         intro: "在包括Inner Sunset、Parkmerced和West Portal的第 7 選區，Matt Boschetto和Stephen Martin-Pinto正在挑戰現任市議員Myrna Melgar。閱讀第 7 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/02/meet-the-candidates-all-2024-district-7-supervisor-answers/'>這裡</span>。"
     },
-    "第 9 選區": {
+    "District 9": {
         intro: "隨著Hilary Ronen今年卸任——以及她的助手Santiago Lerma<span class='districtLink' data-url='https://missionlocal.org/2023/10/santiago-lerma-hillary-ronen-aide-confirms-he-wont-run-for-her-d9-seat/'>選擇不參選</span>接替她的席位——第 9 選區的競選格局對各方挑戰者來說都是開放的，該選區包括Mission、Bernal Heights和Portola。十一位候選人已<span class='districtLink' data-url='https://www.sf.gov/reports/november-2024/candidates-november-5-2024-consolidated-general-election'>申請參選</span>，其中八人正在積極競選，使第 9 選區成為全市競爭最激烈的選區。閱讀第 9 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/01/meet-the-candidates-all-2024-district-9-supervisor-answers/'>這裡</span>。"
     },
-    "第 11 選區": {
+    "District 11": {
         intro: "第 11 選區市議員Ahsha Safaí任期已滿——並正在競選市長——目前已有七名候選人<span class='districtLink' data-url='https://www.sf.gov/reports/november-2024/candidates-november-5-2024-consolidated-general-election#board-of-supervisors-district-11'>宣布參選</span>接替他作為Excelsior、Oceanview和Outer Mission的代表。其中六名候選人正在積極競選。閱讀第 11 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/02/meet-the-candidates-all-2024-district-11-supervisor-answers/'>這裡</span>。"
     }
-};
-
+    };
 
     // function to define map layers information
     function mapLineFunction(mapID, visibility, source) {
@@ -437,7 +506,7 @@ var districtInfo = {
         mapFillFunction("map_fill", "visible", 'districtMap.geojson');
         mapLabelFunction();
     
-        updateContent("第 1 選區");
+        updateContent("District 1");
     
         var popup;
     
@@ -449,8 +518,8 @@ var districtInfo = {
         }
     
         function createPopupContent(district) {
-            var breakdown = raceBreakdown["第 " + district + " 選區"];
-            var popupContent = "<h4>第 " + district + " 選區</h4>";
+            var breakdown = raceBreakdown["District " + district];
+            var popupContent = "<h4>District " + district + "</h4>";
             for (var race in breakdown) {
                 popupContent += "<p>" + race + ": " + breakdown[race] + "%</p>";
             }
@@ -460,7 +529,7 @@ var districtInfo = {
         function onFeatureClick(e) {
             var feature = e.features[0];
             var district = feature.properties.DISTRICT;
-            updateContent("第 " + district + " 選區");
+            updateContent("District " + district);
             removePopup(); // Optionally, you may want to keep the popup open on click
         }
     

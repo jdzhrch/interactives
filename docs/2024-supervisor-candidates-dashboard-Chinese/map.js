@@ -352,6 +352,8 @@ var districtInfo = {
         intro: "第 11 選區市議員Ahsha Safaí任期已滿——並正在競選市長——目前已有七名候選人<span class='districtLink' data-url='https://www.sf.gov/reports/november-2024/candidates-november-5-2024-consolidated-general-election#board-of-supervisors-district-11'>宣布參選</span>接替他作為Excelsior、Oceanview和Outer Mission的代表。其中六名候選人正在積極競選。閱讀第 11 選區「認識候選人」系列報導請點擊<span class='districtLink' data-url='https://missionlocal.org/2024/02/meet-the-candidates-all-2024-district-11-supervisor-answers/'>這裡</span>。"
     }
 };
+
+
     // function to define map layers information
     function mapLineFunction(mapID, visibility, source) {
         map.addLayer({
@@ -430,61 +432,54 @@ var districtInfo = {
             type: 'geojson',
             data: 'districtMap.geojson'
         });
-
+    
         mapLineFunction("map_line", "none", 'districtMap.geojson');
         mapFillFunction("map_fill", "visible", 'districtMap.geojson');
         mapLabelFunction();
-
+    
         updateContent("第 1 選區");
-
-        map.on('click', 'map_fill', function (e) {
-            var feature = e.features[0];
-            var district = feature.properties.DISTRICT;
-            updateContent("第 " + district + " 選區");
-
-            // Remove the old popup if it exists
-            if (popup) {
-                popup.remove();
-            }
-        });
-
-        map.on('touchstart', 'map_fill', function (e) {
-            var feature = e.features[0];
-            var district = feature.properties.DISTRICT;
-            updateContent("第 " + district + " 選區");
-
-            // Remove the old popup if it exists
-            if (popup) {
-                popup.remove();
-            }
-        });        
-
+    
         var popup;
-
-        map.on('mouseenter', 'map_fill', function (e) {
-            var district = e.features[0].properties.DISTRICT;
-            map.setFeatureState({ source: 'map_fill_source', id: district }, { hover: true });
-
+    
+        function removePopup() {
+            if (popup) {
+                popup.remove();
+                popup = null;
+            }
+        }
+    
+        function createPopupContent(district) {
             var breakdown = raceBreakdown["第 " + district + " 選區"];
             var popupContent = "<h4>第 " + district + " 選區</h4>";
             for (var race in breakdown) {
                 popupContent += "<p>" + race + ": " + breakdown[race] + "%</p>";
             }
-            popupContent += "</div>";
-
-            // If there's already a popup, remove it
-            if (popup) {
-                popup.remove();
-            }
-
+            return popupContent;
+        }
+    
+        function onFeatureClick(e) {
+            var feature = e.features[0];
+            var district = feature.properties.DISTRICT;
+            updateContent("第 " + district + " 選區");
+            removePopup(); // Optionally, you may want to keep the popup open on click
+        }
+    
+        function onFeatureHover(e) {
+            var district = e.features[0].properties.DISTRICT;
+            map.setFeatureState({ source: 'map_fill_source', id: district }, { hover: true });
+    
+            var popupContent = createPopupContent(district);
+    
+            removePopup(); // Remove any existing popup
+    
             popup = new mapboxgl.Popup({
                 closeButton: false,
-                offset: [0, -10]
+                offset: [0, 10] // Adjust offset to position the popup better
             })
                 .setLngLat(e.lngLat)
                 .setHTML(popupContent)
                 .addTo(map);
-
+    
             map.setPaintProperty('map_fill', 'fill-outline-color', [
                 'case',
                 ['==', ['get', 'DISTRICT'], district],
@@ -492,31 +487,32 @@ var districtInfo = {
                 'transparent'
             ]);
             map.setPaintProperty('map_fill', 'fill-outline-width', 2);
-        });
-
-        map.on('mouseleave', 'map_fill', function () {
+        }
+    
+        function onFeatureLeave() {
             var features = map.queryRenderedFeatures({ layers: ['map_fill'] });
             if (features.length > 0) {
                 var district = features[0].properties.DISTRICT;
                 map.setFeatureState({ source: 'map_fill_source', id: district }, { hover: false });
             }
-
-            // If there's a popup, remove it
-            if (popup) {
-                popup.remove();
-                popup = null;
-            }
-
+    
+            removePopup();
             map.setPaintProperty('map_fill', 'fill-outline-width', 0);
+        }
+    
+        map.on('click', 'map_fill', onFeatureClick);
+        map.on('touchstart', 'map_fill', onFeatureClick);
+        map.on('mouseenter', 'map_fill', onFeatureHover);
+        map.on('mousemove', 'map_fill', onFeatureHover);
+        map.on('mouseleave', 'map_fill', onFeatureLeave);
+        map.on('touchend', 'map_fill', onFeatureLeave);
+    
+        // Resize map when window is resized
+        map.once('load', () => {
+            map.resize();
         });
-
-        // resize map when window is resized
-        this.map.once('load', () => {
-            this.map.resize();
-        });
-
-
     });
+    
 
 
     // number formatting function
@@ -526,72 +522,99 @@ var districtInfo = {
         return str.join(".");
     }
 
-    // Function to update content based on the clicked district
-    function updateContent(district) {
-        var container = document.getElementById("results-body");
-        container.innerHTML = "";
-        
-        // Check if the district exists in the districtInfo object
-        if (districtInfo.hasOwnProperty(district)) {
-            // Create and append intro paragraph
-            var introParaElement = document.createElement("p");
-            introParaElement.innerHTML = districtInfo[district].intro;
-            introParaElement.classList.add("intro-para");
-            container.appendChild(introParaElement);
-        } else {
-            container.textContent = "No information found for " + district;
-        }
+// Function to update content based on the clicked district
+function updateContent(district) {
+    var container = document.getElementById("results-body");
+    container.innerHTML = "";
+    
+    // Check if the district exists in the districtInfo object
+    if (districtInfo.hasOwnProperty(district)) {
+        // Create and append intro paragraph
+        var introParaElement = document.createElement("p");
+        introParaElement.innerHTML = districtInfo[district].intro;
+        introParaElement.classList.add("intro-para");
+        container.appendChild(introParaElement);
+    } else {
+        container.textContent = "No information found for " + district;
+    }
 
-        // Check if the district exists in the candidates object
-        if (candidates.hasOwnProperty(district)) {
-            // Update the header with the clicked district name
-            document.getElementById("results-header").textContent = district;
+    // Check if the district exists in the candidates object
+    if (candidates.hasOwnProperty(district)) {
+        // Update the header with the clicked district name
+        document.getElementById("results-header").textContent = district;
 
-            // Iterate over candidates for the selected district
-            candidates[district].forEach(function(candidate) {
-                // Div for each candidate information
-                var candidateDiv = document.createElement("div");
-                candidateDiv.classList.add("candidate-info");
+        // Iterate over candidates for the selected district
+        candidates[district].forEach(function(candidate) {
+            // Div for each candidate information
+            var candidateDiv = document.createElement("div");
+            candidateDiv.classList.add("candidate-info");
 
-                // Candidate portraits
-                var image = document.createElement("img");
-                image.classList.add("candidates");
-                image.src = candidate.imageURL;
-                image.style.width = "70px";
-                image.style.height = "auto";
-                candidateDiv.appendChild(image);
+            // Candidate portraits
+            var image = document.createElement("img");
+            image.classList.add("candidates");
+            image.src = candidate.imageURL;
+            image.style.width = "70px";
+            image.style.height = "auto";
+            image.style.marginTop = "7px";
+            image.style.alignSelf = "flex-start"; 
+            candidateDiv.appendChild(image);
 
-                // Div for candidate details
-                var detailsDiv = document.createElement("div");
-                detailsDiv.classList.add("candidate-details");
+            // Div for candidate details
+            var detailsDiv = document.createElement("div");
+            detailsDiv.classList.add("candidate-details");
 
-                // Candidate name
-                var nameParagraph = document.createElement("p");
-                nameParagraph.textContent = candidate.name;
-                nameParagraph.classList.add("candidate-name");
-                detailsDiv.appendChild(nameParagraph);
+            // Candidate name
+            var nameParagraph = document.createElement("p");
+            nameParagraph.textContent = candidate.name;
+            nameParagraph.classList.add("candidate-name");
+            detailsDiv.appendChild(nameParagraph);
 
-                // Candidate job description
-                var jobParagraph = document.createElement("p");
-                jobParagraph.textContent = candidate.jobDescription;
-                jobParagraph.classList.add("candidate-job");
-                detailsDiv.appendChild(jobParagraph);
+            // Candidate job description
+            var jobParagraph = document.createElement("p");
+            jobParagraph.innerHTML = "<strong>Job:</strong> " + candidate.jobDescription;
+            jobParagraph.classList.add("candidate-job");
+            detailsDiv.appendChild(jobParagraph);
 
-                // Candidate living history
-                var livingHistoryParagraph = document.createElement("p");
-                livingHistoryParagraph.textContent = candidate.livingHistory;
-                livingHistoryParagraph.classList.add("candidate-living");
-                detailsDiv.appendChild(livingHistoryParagraph);
+            // Candidate age
+            var ageParagraph = document.createElement("p");
+            ageParagraph.innerHTML = "<strong>Age:</strong> " + candidate.age;
+            ageParagraph.classList.add("candidate-age");
+            detailsDiv.appendChild(ageParagraph);
 
-                // Append the details div to the candidate div
-                candidateDiv.appendChild(detailsDiv);
+            // Candidate residency
+            var residencyParagraph = document.createElement("p");
+            residencyParagraph.innerHTML = "<strong>Residency:</strong> " + candidate.residency;
+            residencyParagraph.classList.add("candidate-residency");
+            detailsDiv.appendChild(residencyParagraph);
 
-                // Append the candidate div to the container
-                container.appendChild(candidateDiv);
-            });
-        } else {
-            container.textContent = "No candidates found for " + district;
-        }
+            // Candidate transportation
+            var transportationParagraph = document.createElement("p");
+            transportationParagraph.innerHTML = "<strong>Transportation:</strong> " + candidate.transportation;
+            transportationParagraph.classList.add("candidate-transportation");
+            detailsDiv.appendChild(transportationParagraph);
+
+            // Candidate education
+            var educationParagraph = document.createElement("p");
+            educationParagraph.innerHTML = "<strong>Education:</strong> " + candidate.education;
+            educationParagraph.classList.add("candidate-education");
+            detailsDiv.appendChild(educationParagraph);
+
+            // Candidate languages
+            var languagesParagraph = document.createElement("p");
+            languagesParagraph.innerHTML = "<strong>Languages:</strong> " + candidate.languages;
+            languagesParagraph.classList.add("candidate-languages");
+            detailsDiv.appendChild(languagesParagraph);
+
+            // Append the details div to the candidate div
+            candidateDiv.appendChild(detailsDiv);
+
+            // Append the candidate div to the container
+            container.appendChild(candidateDiv);
+        });
+    } else {
+        container.textContent = "No candidates found for " + district;
+    }
+
 
         // Add event listeners to all links with the 'districtLink' class
         var links = document.getElementsByClassName("districtLink");

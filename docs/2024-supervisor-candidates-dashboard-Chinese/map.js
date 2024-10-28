@@ -435,12 +435,12 @@ var districtInfo = {
         mapFillFunction("map_fill", "visible", 'districtMap.geojson');
         mapLabelFunction();
 
-        updateContent("第1選區");
+        updateContent("第 1 選區");
 
         map.on('click', 'map_fill', function (e) {
             var feature = e.features[0];
             var district = feature.properties.DISTRICT;
-            updateContent("第" + district + "選區");
+            updateContent("第 " + district + " 選區");
 
             // Remove the old popup if it exists
             if (popup) {
@@ -451,7 +451,7 @@ var districtInfo = {
         map.on('touchstart', 'map_fill', function (e) {
             var feature = e.features[0];
             var district = feature.properties.DISTRICT;
-            updateContent("第" + district + "選區");
+            updateContent("第 " + district + " 選區");
 
             // Remove the old popup if it exists
             if (popup) {
@@ -465,8 +465,8 @@ var districtInfo = {
             var district = e.features[0].properties.DISTRICT;
             map.setFeatureState({ source: 'map_fill_source', id: district }, { hover: true });
 
-            var breakdown = raceBreakdown["第" + district + "選區"];
-            var popupContent = "<h4>第" + district + "選區</h4>";
+            var breakdown = raceBreakdown["第 " + district + " 選區"];
+            var popupContent = "<h4>第 " + district + " 選區</h4>";
             for (var race in breakdown) {
                 popupContent += "<p>" + race + ": " + breakdown[race] + "%</p>";
             }
